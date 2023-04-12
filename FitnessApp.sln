@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessApp", "FitnessApp\FitnessApp.csproj", "{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessApiClient", "FitnessApiClient\FitnessApiClient.csproj", "{F0D412FD-449B-40B3-9BBE-F7111DACF503}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0D412FD-449B-40B3-9BBE-F7111DACF503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0D412FD-449B-40B3-9BBE-F7111DACF503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0D412FD-449B-40B3-9BBE-F7111DACF503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0D412FD-449B-40B3-9BBE-F7111DACF503}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4BD49723-3CD1-4604-B5CD-8E60D797E08A}
+	EndGlobalSection
+EndGlobal

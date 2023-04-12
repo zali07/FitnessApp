@@ -1,0 +1,14 @@
+﻿@using FitnessApiClient.Api
+@using FitnessApiClient.Context
+@using Microsoft.EntityFrameworkCore
+
+@inject MyDbContext DbContext
+
+@code {
+    List<FitnessArena> fitnessArenas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        fitnessArenas = await DbContext.FitnessArenas.ToListAsync();
+    }
+}
