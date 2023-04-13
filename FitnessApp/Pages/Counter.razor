@@ -19,6 +19,8 @@
         {
             <tr>
                 <td>@arena.arenaId</td>
+                <td>@arena.name</td>
+                <td>@arena.isDeleted</td>
             </tr>
         }
     </tbody>
@@ -27,9 +29,9 @@
 
 
 @code {
-    List<FitnessArena> fitnessArenas;
+    List<FitnessArena> fitnessArenas = new List<FitnessArena>();
     protected override async Task OnInitializedAsync()
     {
-        var fitnessArenas = await DbContext.FitnessArenas.ToListAsync();
+        fitnessArenas = await DbContext.FitnessArenas.ToListAsync();
     }
 }
