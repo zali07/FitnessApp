@@ -1,5 +1,6 @@
 ﻿using FitnessApiClient.Api;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace FitnessApiClient.Context
     public class MyDbContext : DbContext
     {
         public DbSet<FitnessArena> FitnessArenas { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var Server = "myServerName\myInstanceName; Database = myDataBase; User Id = myUsername; Password = myPassword"
-            optionsBuilder.UseSqlServer(Server);
+            optionsBuilder.UseSqlServer("tcp:fitnessapp.database.windows.net;Persist Security Info=True;User ID=fitnessapp;Password=fitness123!");
         }
     }
 }
