@@ -11,5 +11,6 @@ namespace FitnessApiClient.Api
         public int arenaId { get; set; }
         public string name { get; set; }
         public bool isDeleted { get; set; }
+
     }
 }

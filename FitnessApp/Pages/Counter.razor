@@ -1,14 +1,35 @@
-﻿@using FitnessApiClient.Api
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+@using FitnessApiClient.Api
 @using FitnessApiClient.Context
 @using Microsoft.EntityFrameworkCore
-
 @inject MyDbContext DbContext
+
+<h1>Arenas</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var arena in fitnessArenas)
+        {
+            <tr>
+                <td>@arena.arenaId</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 
 @code {
     List<FitnessArena> fitnessArenas;
-
     protected override async Task OnInitializedAsync()
     {
-        fitnessArenas = await DbContext.FitnessArenas.ToListAsync();
+        var fitnessArenas = await DbContext.FitnessArenas.ToListAsync();
     }
 }
