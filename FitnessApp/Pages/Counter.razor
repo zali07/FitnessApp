@@ -6,33 +6,55 @@
 @using FitnessApiClient.Context
 @using Microsoft.EntityFrameworkCore
 @using FitnessApiClient
-@*@inject MyDbContext DbContext*@
 
 <h1>Arenas</h1>
 <table class="table">
     <thead>
         <tr>
-            <th>Id</th>
+            <th>FitnessArenas</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var arena in fitnessArenas)
         {
             <tr>
-                <td>@arena.arenaId</td>
-                <td>@arena.name</td>
-                <td>@arena.isDeleted</td>
+                <td>@arena.ArenaId</td>
+                <td>@arena.Name</td>
+                <td>@arena.IsDeleted</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Clients</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var client in clients)
+        {
+            <tr>
+                <td>@client.ClientId</td>
+                <td>@client.Name</td>
             </tr>
         }
     </tbody>
 </table>
 
-
-
 @code {
     List<FitnessArena> fitnessArenas = new List<FitnessArena>();
+    List<TicketTypes> ticketTypes = new List<TicketTypes>();
+    List<Clients> clients = new List<Clients>();
+    List<Entries> entries = new List<Entries>();
+    List<ClientTickets> clientTickets = new List<ClientTickets>();
+
     protected override async Task OnInitializedAsync()
     {
         fitnessArenas = await DbClient.GetTable<FitnessArena>();
+        ticketTypes = await DbClient.GetTable<TicketTypes>();
+        clients = await DbClient.GetTable<Clients>();
+        entries = await DbClient.GetTable<Entries>();
+        clientTickets = await DbClient.GetTable<ClientTickets>();
     }
 }

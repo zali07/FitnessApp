@@ -14,8 +14,7 @@ namespace FitnessApiClient
 
         public static async Task<List<T>> GetTable<T>() where T : class
         {
-            var table = _context.Set<T>();
-            return await table.ToListAsync();
+            return await _context.Set<T>().ToListAsync();
         }
     }
 }
