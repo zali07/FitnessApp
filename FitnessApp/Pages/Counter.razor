@@ -5,7 +5,8 @@
 @using FitnessApiClient.Api
 @using FitnessApiClient.Context
 @using Microsoft.EntityFrameworkCore
-@inject MyDbContext DbContext
+@using FitnessApiClient
+@*@inject MyDbContext DbContext*@
 
 <h1>Arenas</h1>
 <table class="table">
@@ -32,6 +33,6 @@
     List<FitnessArena> fitnessArenas = new List<FitnessArena>();
     protected override async Task OnInitializedAsync()
     {
-        fitnessArenas = await DbContext.FitnessArenas.ToListAsync();
+        fitnessArenas = await DbClient.GetTable<FitnessArena>();
     }
 }

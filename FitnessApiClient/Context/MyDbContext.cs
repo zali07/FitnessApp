@@ -11,13 +11,6 @@ namespace FitnessApiClient.Context
 {
     public class MyDbContext : DbContext
     {
-        //private readonly IConfiguration conf;
-
-        //public MyDbContext(IConfiguration conf)
-        //{
-        //    this.conf = conf;
-        //}
-
         public DbSet<FitnessArena> FitnessArenas { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
