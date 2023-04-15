@@ -117,7 +117,7 @@ namespace FitnessApiClient.Context
                 .IsRequired();
 
             modelBuilder.Entity<Entries>()
-                .Property(e => e.TicketId)
+                .Property(e => e.TicketTypeId)
                 .IsRequired();
 
             modelBuilder.Entity<Entries>()
@@ -142,7 +142,7 @@ namespace FitnessApiClient.Context
                 .IsRequired();
 
             modelBuilder.Entity<ClientTickets>()
-                .Property(ct => ct.TicketId)
+                .Property(ct => ct.TicketTypeId)
                 .IsRequired();
 
             modelBuilder.Entity<ClientTickets>()

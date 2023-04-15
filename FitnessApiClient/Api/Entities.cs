@@ -40,7 +40,7 @@
     {
         public int EntryId { get; set; }
         public int ClientId { get; set; }
-        public int TicketId { get; set; }
+        public int TicketTypeId { get; set; }
         public DateTime Date { get; set; }
         public int InsertedByUid { get; set; }
         public string? Barcode { get; set; }
@@ -51,7 +51,7 @@
     {
         public int ClientTicketsId { get; set; }
         public int ClientId { get; set; }
-        public int TicketId { get; set; }
+        public int TicketTypeId { get; set; }
         public DateTime IssueDate { get; set; }
         public string? Barcode { get; set; }
         public int NumOfEntries { get; set; }
