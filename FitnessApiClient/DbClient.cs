@@ -3,18 +3,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessApiClient
 {
-    public class DbClient
+    public class DbClient : IDisposable
     {
-        private static readonly MyDbContext _context;
+        protected readonly MyDbContext _context;
 
-        static DbClient()
+        public DbClient(MyDbContext context)
         {
-            _context = new MyDbContext();
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public static async Task<List<T>> GetTable<T>() where T : class
+        public async Task<List<T>> GetTable<T>() where T : class
         {
             return await _context.Set<T>().ToListAsync();
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
 }

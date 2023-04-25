@@ -1,0 +1,129 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+@using FitnessApiClient.Api
+@using FitnessApiClient.Context
+@using FitnessApiClient.Validator
+@using Microsoft.EntityFrameworkCore
+@using FitnessApiClient
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using FluentValidation
+
+<h1>Admin</h1>
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>FitnessArenas</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var arena in fitnessArenas)
+        {
+            <tr>
+                <td>@arena.ArenaId</td>
+                <td>@arena.Name</td>
+                <td>@arena.IsDeleted</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Clients</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var client in clients)
+        {
+            <tr>
+                <td>@client.ClientId</td>
+                <td>@client.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>*@
+
+<Tabs>
+    <Tab Title="Add Ticket Type">
+        <h1>Add Ticket Type</h1>
+        <EditForm Model="@newTicketType" OnValidSubmit="@HandleValidSubmit">
+            <InputValidator/>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            
+            <div class="form-group">
+                <label for="Name">Name:</label>
+                <InputText class="form-control" id="Name" @bind-Value="newTicketType.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Price">Price:</label>
+                <InputNumber class="form-control" id="Price" @bind-Value="newTicketType.Price" />
+            </div>
+            <div class="form-group">
+                <label for="ValidityDays">Validity Days:</label>
+                <InputNumber class="form-control" id="ValidityDays" @bind-Value="newTicketType.ValidityDays" />
+            </div>
+            <div class="form-group">
+                <label for="ValidityEntries">Validity Entries:</label>
+                <InputNumber class="form-control" id="ValidityEntries" @bind-Value="newTicketType.ValidityEntries" />
+            </div>
+            <div class="form-group">
+                <label for="ArenaId">Arena Id:</label>
+                <InputNumber class="form-control" id="ArenaId" @bind-Value="newTicketType.ArenaId" />
+            </div>
+            <div class="form-group">
+                <label for="StartHour">Start Hour:</label>
+                <InputNumber class="form-control" id="StartHour" @bind-Value="newTicketType.StartHour" />
+            </div>
+            <div class="form-group">
+                <label for="EndHour">End Hour:</label>
+                <InputNumber class="form-control" id="EndHour" @bind-Value="newTicketType.EndHour" />
+            </div>
+            <div class="form-group">
+                <label for="EntriesPerDay">Entries Per Day:</label>
+                <InputNumber class="form-control" id="EntriesPerDay" @bind-Value="newTicketType.EntriesPerDay" />
+            </div>
+            @if (myValidator.Validate(newTicketType).IsValid)
+            {
+                <button class="btn btn-primary" @onclick="HandleValidSubmit">Submit</button>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>Submit</button>
+            }
+        </EditForm>
+    </Tab>
+</Tabs>
+
+@code {
+    private InputValidator<TicketTypes> myValidator = new InputValidator<TicketTypes>();
+    private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());
+
+    private TicketTypes newTicketType = new TicketTypes();
+
+    private async Task HandleValidSubmit()
+    {
+        using (var adminDbClient = new AdminDbClient(new MyDbContext()))
+        {
+            await adminDbClient.AddTicketType(newTicketType);
+        }
+    }
+
+    //List<FitnessArena> fitnessArenas = new List<FitnessArena>();
+    //List<TicketTypes> ticketTypes = new List<TicketTypes>();
+    //List<Clients> clients = new List<Clients>();
+    //List<Entries> entries = new List<Entries>();
+    //List<ClientTickets> clientTickets = new List<ClientTickets>();
+
+    //protected override async Task OnInitializedAsync()
+    //{
+        //fitnessArenas = await DbClient.GetTable<FitnessArena>();
+        //ticketTypes = await DbClient.GetTable<TicketTypes>();
+        //clients = await DbClient.GetTable<Clients>();
+        //entries = await DbClient.GetTable<Entries>();
+        //clientTickets = await DbClient.GetTable<ClientTickets>();
+    //}
+}
