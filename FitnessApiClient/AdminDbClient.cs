@@ -1,11 +1,5 @@
 ﻿using FitnessApiClient.Api;
 using FitnessApiClient.Context;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FitnessApiClient
 {
@@ -18,10 +12,18 @@ namespace FitnessApiClient
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddTicketType(TicketTypes pTicketType)
+        public async Task<int> AddTicketType(TicketTypes pTicketType)
         {
-            _context.TicketTypes.Add(pTicketType);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.TicketTypes.Add(pTicketType);
+                await _context.SaveChangesAsync();
+                return 1;
+            }catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return -1;
+            }
         }
     }
 }

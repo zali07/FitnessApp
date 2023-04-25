@@ -1,0 +1,28 @@
+﻿th {
+    font-size: 20px;
+    text-align: center;
+}
+
+td {
+    padding: 10px;
+    font-size: 20px;
+}
+
+table, th, td {
+    border: 1px solid;
+}
+
+table {
+    margin-bottom: 30px;
+    width: 100%;
+    text-align: right;
+}
+
+.refresh-table {
+    margin-top: 50px;
+}
+
+.selected-row {
+    background-color: lightblue; /* Change to desired background color */
+    font-weight: bold; /* Change to desired font weight */
+}

@@ -26,8 +26,10 @@ namespace FitnessApiClient.Validator
                     .WithMessage("ArenaId must be greater than 0.");
                 RuleFor(x => ((TicketTypes)(object)x).StartHour)
                     .GreaterThanOrEqualTo(0)
+                    .LessThanOrEqualTo(24)
                     .WithMessage("Start hour must be greater than or equal to 0.");
                 RuleFor(x => ((TicketTypes)(object)x).EndHour)
+                    .GreaterThanOrEqualTo(0)
                     .LessThanOrEqualTo(24)
                     .WithMessage("End hour must be less than or equal to 24.");
                 RuleFor(x => ((TicketTypes)(object)x).EntriesPerDay)

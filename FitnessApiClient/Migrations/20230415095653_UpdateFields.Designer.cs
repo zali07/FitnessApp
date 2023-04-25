@@ -54,7 +54,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("NumOfEntries")
                         .HasColumnType("int");
 
-                    b.Property<int>("TicketTypeId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<bool>("Valid")
@@ -138,7 +138,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("InsertedByUid")
                         .HasColumnType("int");
 
-                    b.Property<int>("TicketTypeId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.HasKey("EntryId");
@@ -170,11 +170,11 @@ namespace FitnessApiClient.Migrations
 
             modelBuilder.Entity("FitnessApiClient.Api.TicketTypes", b =>
                 {
-                    b.Property<int>("TicketTypeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketTypeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ArenaId")
                         .HasColumnType("int");
@@ -206,7 +206,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("ValidityEntries")
                         .HasColumnType("int");
 
-                    b.HasKey("TicketTypeId");
+                    b.HasKey("Id");
 
                     b.ToTable("TicketTypes", (string)null);
                 });

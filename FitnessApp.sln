@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessApp", "FitnessApp\FitnessApp.csproj", "{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FitnessApp", "FitnessApp\FitnessApp.csproj", "{E8D76059-6C6C-4406-B882-2EDFB3BBCE5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessApiClient", "FitnessApiClient\FitnessApiClient.csproj", "{F0D412FD-449B-40B3-9BBE-F7111DACF503}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FitnessApiClient", "FitnessApiClient\FitnessApiClient.csproj", "{F0D412FD-449B-40B3-9BBE-F7111DACF503}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

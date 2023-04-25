@@ -1,0 +1,172 @@
+﻿@page "/ticket_type"
+
+<PageTitle>New ticket type</PageTitle>
+
+@using FitnessApiClient.Api
+@using FitnessApiClient.Context
+@using FitnessApiClient.Validator
+@using Microsoft.EntityFrameworkCore
+@using FitnessApiClient
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using FluentValidation
+
+<Tabs>
+    <Tab Title="Add Ticket Type">
+        <h1>Add Ticket Type</h1>
+        <EditForm Model="@newTicketType" OnValidSubmit="@HandleValidSubmit">
+            @*<InputValidator/>*@
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            
+            <div class="form-group">
+                <label for="Name">Name:</label>
+                <InputText class="form-control" id="Name" @bind-Value="newTicketType.Name" placeholder="Ticket name" />
+            </div>
+            <div class="form-group">
+                <label for="Price">Price:</label>
+                <InputNumber class="form-control" id="Price" @bind-Value="newTicketType.Price" />
+            </div>
+            <div class="form-group">
+                <label for="ValidityDays">Validity Days:</label>
+                <InputNumber class="form-control" id="ValidityDays" @bind-Value="newTicketType.ValidityDays" placeholder="Ticket name" />
+            </div>
+            <div class="form-group">
+                <label for="ValidityEntries">Validity Entries:</label>
+                <InputNumber class="form-control" id="ValidityEntries" @bind-Value="newTicketType.ValidityEntries" />
+            </div>
+            <div class="form-group">
+                <label for="ArenaId">Arena Id:</label>
+                <InputNumber class="form-control" id="ArenaId" @bind-Value="newTicketType.ArenaId" />
+            </div>
+            <div class="form-group">
+                <label for="StartHour">Start Hour:</label>
+                <InputNumber class="form-control" id="StartHour" @bind-Value="newTicketType.StartHour" />
+            </div>
+            <div class="form-group">
+                <label for="EndHour">End Hour:</label>
+                <InputNumber class="form-control" id="EndHour" @bind-Value="newTicketType.EndHour" />
+            </div>
+            <div class="form-group">
+                <label for="EntriesPerDay">Entries Per Day:</label>
+                <InputNumber class="form-control" id="EntriesPerDay" @bind-Value="newTicketType.EntriesPerDay" />
+            </div>
+            @if (myValidator.Validate(newTicketType).IsValid)
+            {
+                <button class="btn btn-primary">@(
+                        itemSelected ? "Update" : "Submit"
+                )</button>
+                <span>@addText</span>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>Submit</button>
+            }
+        </EditForm>
+        <button class="refresh-table" @onclick="async () => await loadTicketTypesAsync()">Refresh</button>
+        <span>@refreshText</span>
+        <table class="ticket_types_table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>ValidityDays</th>
+                    <th>ValidityEntries</th>
+                    <th>IsDeleted</th>
+                    <th>ArenaId</th>
+                    <th>StartHour</th>
+                    <th>EndHour</th>
+                    <th>EntriesPerDay</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticketType in ticketTypes)
+                {
+                    <tr @onclick="(() => HandleItemSelected(ticketType.TicketTypeId))"
+                       >
+                        <td>@ticketType.Name</td>
+                        <td>@ticketType.Price RON</td>
+                        <td>@ticketType.ValidityDays</td>
+                        <td>@ticketType.ValidityEntries</td>
+                        <td>@ticketType.IsDeleted</td>
+                        <td>@ticketType.ArenaId</td>
+                        <td>@ticketType.StartHour</td>
+                        <td>@ticketType.EndHour</td>
+                        <td>@ticketType.EntriesPerDay</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Tab>
+</Tabs>
+
+@code {
+    private InputValidator<TicketTypes> myValidator = new InputValidator<TicketTypes>();
+    private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());
+
+    List<TicketTypes> ticketTypes = new List<TicketTypes>();
+
+    private TicketTypes newTicketType = new TicketTypes();
+
+    bool itemSelected = false;
+
+    private string refreshText = "";
+    private int addReturnValue = 0;
+    private string addText = "";
+
+    private void HandleItemSelected(int ticketTypeId)
+    {
+        itemSelected = true;
+        newTicketType = ticketTypes.First(ticket => ticket.TicketTypeId == ticketTypeId);
+
+        if (newTicketType == null)
+        {
+            newTicketType = new TicketTypes();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        using (var adminDbClient = new AdminDbClient(new MyDbContext()))
+        {
+            addReturnValue = await adminDbClient.AddTicketType(newTicketType);
+            if (addReturnValue == 1)
+            {
+                addText = "Successfully added!";
+            }
+            else if (addReturnValue == -1)
+            {
+                addText = "Failure!";
+            }
+        }
+        newTicketType = new TicketTypes();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await loadTicketTypesAsync();
+    }
+
+    private async Task loadTicketTypesAsync()
+    {
+        refreshText = "Loading...";
+        using (var adminDbClient = new AdminDbClient(new MyDbContext()))
+        {
+            int act_length = ticketTypes.Count();
+            bool empty = false;
+            if (act_length == 0)
+            {
+                empty = true;
+            }
+            ticketTypes = await adminDbClient.GetTable<TicketTypes>();
+            if (!empty && ticketTypes.Count() > act_length)
+            {
+                refreshText = "Successfully loaded new records!";
+            }
+            else
+            {
+                refreshText = "Success!";
+            }
+        }
+    }
+}
