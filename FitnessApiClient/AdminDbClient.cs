@@ -1,5 +1,6 @@
 ﻿using FitnessApiClient.Api;
 using FitnessApiClient.Context;
+using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FitnessApiClient
@@ -45,6 +46,61 @@ namespace FitnessApiClient
             {
                 Console.WriteLine(ex.ToString());
                 return -1;
+            }
+        }
+
+        public async Task<Clients> GetClientByClientId(int id)
+        {
+            try
+            {
+                var myClient = await _context.Set<Clients>().FindAsync(id);
+                return myClient;
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+
+        public async Task<TicketTypes> GetTicketTypeByTicketTypeId(int id)
+        {
+            try
+            {
+                var myClient = await _context.Set<TicketTypes>().FindAsync(id);
+                return myClient;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+
+        public async Task<T> GetByBarcode<T>(string barcode) where T : class
+        {
+            try
+            {
+                if (typeof(T) == typeof(ClientTickets))
+                {
+                    var myEntity = await _context.Set<ClientTickets>().FirstOrDefaultAsync(it => it.Barcode == barcode);
+                    return myEntity as T;
+                }
+                if (typeof(T) == typeof(Entries))
+                {
+                    var myEntity = await _context.Set<Entries>().FirstOrDefaultAsync(it => it.Barcode == barcode);
+                    return myEntity as T;
+                }
+                if (typeof(T) == typeof(Clients))
+                {
+                    var myEntity = await _context.Set<Clients>().FirstOrDefaultAsync(it => it.Barcode == barcode);
+                    return myEntity as T;
+                }
+                return null;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
             }
         }
 
