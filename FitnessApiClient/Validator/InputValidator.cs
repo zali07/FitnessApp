@@ -13,7 +13,7 @@ namespace FitnessApiClient.Validator
                     .NotEmpty()
                     .WithMessage("Please enter a name.");
                 RuleFor(x => ((TicketTypes)(object)x).Price)
-                    .GreaterThan(0)
+                    .GreaterThanOrEqualTo(0)
                     .WithMessage("Price must be greater than 0.");
                 RuleFor(x => ((TicketTypes)(object)x).ValidityDays)
                     .GreaterThan(0)
@@ -31,6 +31,7 @@ namespace FitnessApiClient.Validator
                 RuleFor(x => ((TicketTypes)(object)x).EndHour)
                     .GreaterThanOrEqualTo(0)
                     .LessThanOrEqualTo(24)
+                    .Must((ticketType, endHour) => endHour > ((TicketTypes)(object)ticketType).StartHour)
                     .WithMessage("End hour must be less than or equal to 24.");
                 RuleFor(x => ((TicketTypes)(object)x).EntriesPerDay)
                     .GreaterThan(0)

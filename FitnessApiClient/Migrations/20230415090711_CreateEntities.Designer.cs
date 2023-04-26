@@ -170,11 +170,11 @@ namespace FitnessApiClient.Migrations
 
             modelBuilder.Entity("FitnessApiClient.Api.TicketTypes", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ArenaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArenaId"));
 
                     b.Property<int>("ArenaId")
                         .HasColumnType("int");
@@ -206,7 +206,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("ValidityEntries")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ArenaId");
 
                     b.ToTable("TicketTypes", (string)null);
                 });

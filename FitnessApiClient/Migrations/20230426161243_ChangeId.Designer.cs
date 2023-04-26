@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessApiClient.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230415095653_UpdateFields")]
-    partial class UpdateFields
+    [Migration("20230426161243_ChangeId")]
+    partial class ChangeId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("NumOfEntries")
                         .HasColumnType("int");
 
-                    b.Property<int>("ArenaId")
+                    b.Property<int>("TicketTypeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Valid")
@@ -138,7 +138,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("InsertedByUid")
                         .HasColumnType("int");
 
-                    b.Property<int>("ArenaId")
+                    b.Property<int>("TicketTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("EntryId");
@@ -170,11 +170,11 @@ namespace FitnessApiClient.Migrations
 
             modelBuilder.Entity("FitnessApiClient.Api.TicketTypes", b =>
                 {
-                    b.Property<int>("ArenaId")
+                    b.Property<int>("TicketTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArenaId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketTypeId"));
 
                     b.Property<int>("ArenaId")
                         .HasColumnType("int");
@@ -206,7 +206,7 @@ namespace FitnessApiClient.Migrations
                     b.Property<int>("ValidityEntries")
                         .HasColumnType("int");
 
-                    b.HasKey("ArenaId");
+                    b.HasKey("TicketTypeId");
 
                     b.ToTable("TicketTypes", (string)null);
                 });

@@ -53,9 +53,9 @@ namespace FitnessApiClient
         {
             try
             {
-                var myClient = await _context.Set<Clients>().FindAsync(id);
-                return myClient;
-            }catch(Exception ex)
+                return await _context.Set<Clients>().FindAsync(id);
+            }
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 return null;
@@ -66,13 +66,32 @@ namespace FitnessApiClient
         {
             try
             {
-                var myClient = await _context.Set<TicketTypes>().FindAsync(id);
-                return myClient;
+                return await _context.Set<TicketTypes>().FindAsync(id);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 return null;
+            }
+        }
+
+        public async Task<int> DeleteEntity<T>(int id) where T : class
+        {
+            try
+            {
+                var existingEntity = await _context.Set<T>().FindAsync(id);
+                if (existingEntity == null)
+                {
+                    return -1;
+                }
+                _context.Entry(existingEntity).CurrentValues.SetValues(new { IsDeleted = true });
+                await _context.SaveChangesAsync();
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return -1;
             }
         }
 
@@ -82,18 +101,15 @@ namespace FitnessApiClient
             {
                 if (typeof(T) == typeof(ClientTickets))
                 {
-                    var myEntity = await _context.Set<ClientTickets>().FirstOrDefaultAsync(it => it.Barcode == barcode);
-                    return myEntity as T;
+                    return await _context.Set<ClientTickets>().FirstOrDefaultAsync(it => it.Barcode == barcode) as T;
                 }
                 if (typeof(T) == typeof(Entries))
                 {
-                    var myEntity = await _context.Set<Entries>().FirstOrDefaultAsync(it => it.Barcode == barcode);
-                    return myEntity as T;
+                    return await _context.Set<Entries>().FirstOrDefaultAsync(it => it.Barcode == barcode) as T;
                 }
                 if (typeof(T) == typeof(Clients))
                 {
-                    var myEntity = await _context.Set<Clients>().FirstOrDefaultAsync(it => it.Barcode == barcode);
-                    return myEntity as T;
+                    return await _context.Set<Clients>().FirstOrDefaultAsync(it => it.Barcode == barcode) as T;
                 }
                 return null;
             }
@@ -103,6 +119,5 @@ namespace FitnessApiClient
                 return null;
             }
         }
-
     }
 }

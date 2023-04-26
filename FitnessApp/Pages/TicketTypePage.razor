@@ -11,6 +11,16 @@
 @using Microsoft.AspNetCore.Components.Web
 @using FluentValidation
 
+@if (updateSuccess)
+{
+    <div class="alert alert-success">Update was successful!</div>
+}
+
+@if (failed)
+{
+    <div class="alert alert-danger">Failed!</div>
+}
+
 <Tabs>
     <Tab Title="Add Ticket Type">
         <h1>Add Ticket Type</h1>
@@ -28,7 +38,7 @@
             </div>
             <div class="form-group">
                 <label for="ValidityDays">Validity Days:</label>
-                <InputNumber class="form-control" id="ValidityDays" @bind-Value="newTicketType.ValidityDays" placeholder="Ticket name" />
+                <InputNumber class="form-control" id="ValidityDays" @bind-Value="newTicketType.ValidityDays" />
             </div>
             <div class="form-group">
                 <label for="ValidityEntries">Validity Entries:</label>
@@ -52,17 +62,23 @@
             </div>
             @if (myValidator.Validate(newTicketType).IsValid)
             {
-                <button class="btn btn-primary">@(
+                <button class="btn btn-primary submit">@(
                         itemSelected ? "Update" : "Submit"
                 )</button>
-                <span>@addText</span>
             }
             else
             {
-                <button class="btn btn-primary" disabled>Submit</button>
+                <button class="btn btn-primary submit" disabled>Submit</button>
             }
+            
+            @if (itemSelected)
+            {
+                <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
+            }
+
+            <span>@addText</span>
         </EditForm>
-        <button class="refresh-table" @onclick="async () => await loadTicketTypesAsync()">Refresh</button>
+        <button class="refresh-table" @onclick="async () => await LoadTicketTypesAsync()">Refresh</button>
         <span>@refreshText</span>
         <table class="ticket_types_table">
             <thead>
@@ -82,7 +98,7 @@
                 @foreach (var ticketType in ticketTypes)
                 {
                     <tr @onclick="(() => HandleItemSelected(ticketType.TicketTypeId))"
-                       >
+                        class="ticket-type-row @((itemSelected && selectedItemId == ticketType.TicketTypeId ? "selected" : ""))">
                         <td>@ticketType.Name</td>
                         <td>@ticketType.Price RON</td>
                         <td>@ticketType.ValidityDays</td>
@@ -103,22 +119,28 @@
     private InputValidator<TicketTypes> myValidator = new InputValidator<TicketTypes>();
     private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());
 
-    List<TicketTypes> ticketTypes = new List<TicketTypes>();
+    private List<TicketTypes> ticketTypes = new List<TicketTypes>();
 
     private TicketTypes newTicketType = new TicketTypes();
 
-    bool itemSelected = false;
-    int selectedItemId = -1;
+    private bool itemSelected = false;
+    private int selectedItemId = -1;
+    private bool updateSuccess = false;
+    private bool failed = false;
 
     private string refreshText = "";
     private int addReturnValue = 0;
     private int updateReturnValue = 0;
+    private int deleteReturnValue = 0;
     private string addText = "";
 
     private void HandleItemSelected(int ticketTypeId)
     {
+        updateSuccess = false;
+        failed = false;
         itemSelected = true;
         selectedItemId = ticketTypeId;
+        addText = "";
         newTicketType = ticketTypes.First(ticket => ticket.TicketTypeId == ticketTypeId);
 
         if (newTicketType == null)
@@ -129,11 +151,22 @@
 
     private async Task HandleValidSubmit()
     {
+        updateSuccess = false;
+        failed = false;
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
         {
             if (!itemSelected)
             {
                 addReturnValue = await adminDbClient.AddEntity<TicketTypes>(newTicketType);
+
+                if (addReturnValue == 1)
+                {
+                    updateSuccess = true;
+                }
+                else
+                {
+                    failed = true;
+                }
             }
             else
             {
@@ -142,27 +175,61 @@
                     throw new ArgumentNullException();
                 }
                 updateReturnValue = await adminDbClient.UpdateEntity<TicketTypes>(selectedItemId, newTicketType);
+                
+                if (updateReturnValue == 1)
+                {
+                    updateSuccess = true;
+                }
+                else
+                {
+                    failed = true;
+                }
             }
-            if (addReturnValue == 1 || updateReturnValue == 1)
-            {
-                addText = "Successfully added!";
-                StateHasChanged();
-            }
-            else if (addReturnValue == -1 || updateReturnValue == -1)
-            {
-                addText = "Failure!";
-                StateHasChanged();
-            }
+
+            
+            //updateSuccess = addReturnValue == 1 ? true : failed = true;
+
+
+            //addText = "Successfully " + (addReturnValue == 1 ? "added!" : updateReturnValue == 1 ? "updated!" : "");
+
+            //if (addReturnValue == -1 || updateReturnValue == -1)
+            //{
+            //    addText = "Failure!";
+            //}
         }
+        await LoadTicketTypesAsync();
+        itemSelected = false;
+        newTicketType = new TicketTypes();
+    }
+
+    private async Task HandleDelete()
+    {
+        updateSuccess = false;
+        failed = false;
+        using (var adminDbClient = new AdminDbClient(new MyDbContext()))
+        {
+            deleteReturnValue = await adminDbClient.DeleteEntity<TicketTypes>(selectedItemId);      
+        }
+
+        if (deleteReturnValue == 1)
+        {
+            addText = "Successfully updated!";
+        }
+        else if (deleteReturnValue == -1)
+        {
+            addText = "Failure!";
+        }
+        await LoadTicketTypesAsync();
+        itemSelected = false;
         newTicketType = new TicketTypes();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await loadTicketTypesAsync();
+        await LoadTicketTypesAsync();
     }
 
-    private async Task loadTicketTypesAsync()
+    private async Task LoadTicketTypesAsync()
     {
         refreshText = "Loading...";
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))

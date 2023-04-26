@@ -22,7 +22,16 @@ table {
     margin-top: 50px;
 }
 
-.selected-row {
-    background-color: lightblue; /* Change to desired background color */
-    font-weight: bold; /* Change to desired font weight */
+.selected {
+    background-color: lightblue;
+    font-weight: bold;
+}
+
+.ticket-type-row{
+    cursor: pointer;
+}
+
+.submit {
+    margin-top: 15px;
+    margin-right: 10px;
 }
