@@ -15,7 +15,6 @@
     <Tab Title="Add Ticket Type">
         <h1>Add Ticket Type</h1>
         <EditForm Model="@newTicketType" OnValidSubmit="@HandleValidSubmit">
-            @*<InputValidator/>*@
             <DataAnnotationsValidator />
             <ValidationSummary />
             
@@ -109,14 +108,17 @@
     private TicketTypes newTicketType = new TicketTypes();
 
     bool itemSelected = false;
+    int selectedItemId = -1;
 
     private string refreshText = "";
     private int addReturnValue = 0;
+    private int updateReturnValue = 0;
     private string addText = "";
 
     private void HandleItemSelected(int ticketTypeId)
     {
         itemSelected = true;
+        selectedItemId = ticketTypeId;
         newTicketType = ticketTypes.First(ticket => ticket.TicketTypeId == ticketTypeId);
 
         if (newTicketType == null)
@@ -129,14 +131,27 @@
     {
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
         {
-            addReturnValue = await adminDbClient.AddTicketType(newTicketType);
-            if (addReturnValue == 1)
+            if (!itemSelected)
+            {
+                addReturnValue = await adminDbClient.AddEntity<TicketTypes>(newTicketType);
+            }
+            else
+            {
+                if (selectedItemId == -1)
+                {
+                    throw new ArgumentNullException();
+                }
+                updateReturnValue = await adminDbClient.UpdateEntity<TicketTypes>(selectedItemId, newTicketType);
+            }
+            if (addReturnValue == 1 || updateReturnValue == 1)
             {
                 addText = "Successfully added!";
+                StateHasChanged();
             }
-            else if (addReturnValue == -1)
+            else if (addReturnValue == -1 || updateReturnValue == -1)
             {
                 addText = "Failure!";
+                StateHasChanged();
             }
         }
         newTicketType = new TicketTypes();
