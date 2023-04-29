@@ -10,6 +10,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 @using FluentValidation
+@using ClosedXML.Excel
 
 @inject IJSRuntime JSRuntime
 
@@ -77,6 +78,7 @@ else if (failed)
         </EditForm>
         <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
         <span>@refreshText</span>
+        <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
         <table class="clients_table">
             <thead>
                 <tr>
@@ -115,6 +117,57 @@ else if (failed)
 </Tabs>
 
 @code {
+    private async Task ExportToExcel()
+    {
+        using (var workbook = new XLWorkbook())
+        {
+            var worksheet = workbook.Worksheets.Add("Clients");
+
+            // Set header row
+            worksheet.Cell(1, 1).Value = "Name";
+            worksheet.Cell(1, 2).Value = "Phone";
+            worksheet.Cell(1, 3).Value = "Email";
+            worksheet.Cell(1, 4).Value = "IsDeleted";
+            worksheet.Cell(1, 5).Value = "InsertedDate";
+            worksheet.Cell(1, 6).Value = "CNP";
+            worksheet.Cell(1, 7).Value = "Address";
+            worksheet.Cell(1, 8).Value = "Barcode";
+            worksheet.Cell(1, 9).Value = "Notes";
+
+            // Set cell values
+            for (int i = 0; i < clients.Count; i++)
+            {
+                worksheet.Cell(i + 2, 1).Value = clients[i].Name;
+                worksheet.Cell(i + 2, 2).Value = clients[i].Phone;
+                worksheet.Cell(i + 2, 3).Value = clients[i].Email;
+                worksheet.Cell(i + 2, 4).Value = clients[i].IsDeleted;
+                worksheet.Cell(i + 2, 5).Value = clients[i].InsertedDate;
+                worksheet.Cell(i + 2, 6).Value = clients[i].CNP;
+                worksheet.Cell(i + 2, 7).Value = clients[i].Address;
+                worksheet.Cell(i + 2, 8).Value = clients[i].Barcode;
+                worksheet.Cell(i + 2, 9).Value = clients[i].Notes;
+            }
+
+            // Set column widths
+            worksheet.Columns().AdjustToContents();
+
+            // Create a new memory stream
+            using (var stream = new MemoryStream())
+            {
+                // Save the workbook to the memory stream
+                workbook.SaveAs(stream);
+
+                // Set the position of the stream back to the beginning
+                stream.Seek(0, SeekOrigin.Begin);
+
+                // Download the Excel file
+                var fileName = "clients.xlsx";
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, contentType, Convert.ToBase64String(stream.ToArray()));
+            }
+        }
+    }
+
     private InputValidator<Clients> myValidator = new InputValidator<Clients>();
     private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());
 
