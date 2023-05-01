@@ -14,13 +14,17 @@
 
 @inject IJSRuntime JSRuntime
 
-@if (updateSuccess)
+@if (updateSuccess) 
 {
-    <div class="alert alert-success">Update was successful!</div>
+    <div class="alert alert-success fade-in" role="alert">Updated successfully!</div>
 }
-else if (failed)
+@if (failed)
 {
-    <div class="alert alert-danger">Failed!</div>
+    <div class="alert alert-danger fade-in" role="alert">Update failed!</div>
+}
+@if (loaded)
+{
+    <div class="alert alert-success fade-in" role="alert">Refreshed successfully!</div>
 }
 
 <Tabs>
@@ -68,16 +72,14 @@ else if (failed)
             {
                 <button class="btn btn-primary submit" disabled>Submit</button>
             }
-            
             @if (itemSelected)
             {
                 <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
             }
-
             <span>@addText</span>
         </EditForm>
         <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
-        <span>@refreshText</span>
+        @*<span>@refreshText</span>*@
         <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
         <table class="clients_table">
             <thead>
@@ -123,7 +125,6 @@ else if (failed)
         {
             var worksheet = workbook.Worksheets.Add("Clients");
 
-            // Set header row
             worksheet.Cell(1, 1).Value = "Name";
             worksheet.Cell(1, 2).Value = "Phone";
             worksheet.Cell(1, 3).Value = "Email";
@@ -134,7 +135,6 @@ else if (failed)
             worksheet.Cell(1, 8).Value = "Barcode";
             worksheet.Cell(1, 9).Value = "Notes";
 
-            // Set cell values
             for (int i = 0; i < clients.Count; i++)
             {
                 worksheet.Cell(i + 2, 1).Value = clients[i].Name;
@@ -148,19 +148,11 @@ else if (failed)
                 worksheet.Cell(i + 2, 9).Value = clients[i].Notes;
             }
 
-            // Set column widths
             worksheet.Columns().AdjustToContents();
-
-            // Create a new memory stream
             using (var stream = new MemoryStream())
             {
-                // Save the workbook to the memory stream
                 workbook.SaveAs(stream);
-
-                // Set the position of the stream back to the beginning
                 stream.Seek(0, SeekOrigin.Begin);
-
-                // Download the Excel file
                 var fileName = "clients.xlsx";
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", fileName, contentType, Convert.ToBase64String(stream.ToArray()));
@@ -179,6 +171,7 @@ else if (failed)
     private int selectedItemId = -1;
     private bool updateSuccess = false;
     private bool failed = false;
+    private bool loaded = false;
 
     private string refreshText = "";
     private int addReturnValue = 0;
@@ -255,6 +248,7 @@ else if (failed)
         StateHasChanged();
         await Task.Delay(2000);
         updateSuccess = false;
+        loaded = false;
         failed = false;
     }
 
@@ -299,13 +293,11 @@ else if (failed)
                 empty = true;
             }
             clients = await adminDbClient.GetTable<Clients>();
-            if (!empty && clients.Count() > act_length)
-            {
-                refreshText = "Successfully loaded new records!";
-            }
-            else
-            {
-                refreshText = "Success!";
+            if (!empty || clients.Count() > act_length)
+        {
+                loaded = true;
+                refreshText = "Refreshed successfully!";
+                await ClosePopup();
             }
         }
     }

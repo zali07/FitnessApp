@@ -15,11 +15,15 @@
 
 @if (updateSuccess)
 {
-    <div class="alert alert-success">Update was successful!</div>
+    <div class="alert alert-success fade-in" role="alert">Updated successfully!</div>
 }
-else if (failed)
+@if (loaded)
 {
-    <div class="alert alert-danger">Failed!</div>
+    <div class="alert alert-success fade-in" role="alert">Refreshed successfully!</div>
+}
+@if (failed)
+{
+    <div class="alert alert-danger fade-in" role="alert">Update failed!</div>
 }
 
 <Tabs>
@@ -80,7 +84,7 @@ else if (failed)
             <span>@addText</span>
         </EditForm>
         <button class="refresh-table" @onclick="async () => await LoadTicketTypesAsync()">Refresh</button>
-        <span>@refreshText</span>
+        @*<span>@refreshText</span>*@
         <table class="ticket_types_table">
             <thead>
                 <tr>
@@ -128,6 +132,7 @@ else if (failed)
     private int selectedItemId = -1;
     private bool updateSuccess = false;
     private bool failed = false;
+    private bool loaded = false;
 
     private string refreshText = "";
     private int addReturnValue = 0;
@@ -199,6 +204,7 @@ else if (failed)
         StateHasChanged();
         await Task.Delay(2000);
         updateSuccess = false;
+        loaded = false;
         failed = false;
     }
 
@@ -248,13 +254,11 @@ else if (failed)
                 empty = true;
             }
             ticketTypes = await adminDbClient.GetTable<TicketTypes>();
-            if (!empty && ticketTypes.Count() > act_length)
+            if (!empty || ticketTypes.Count() > act_length)
             {
-                refreshText = "Successfully loaded new records!";
-            }
-            else
-            {
+                loaded = true;
                 refreshText = "Success!";
+                await ClosePopup();
             }
         }
     }
