@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @using FitnessApp.Data
+@using System.Security.Claims;
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -35,7 +36,7 @@
 @code {
     private User user;
     public string LoginMesssage { get; set; }
-    //ClaimsPrincipal claimsPrincipal;
+    ClaimsPrincipal claimsPrincipal;
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -43,33 +44,14 @@
     protected override Task OnInitializedAsync()
     {
         user = new User();
-
-        //claimsPrincipal = (await authenticationStateTask).User;
-
-        //if (claimsPrincipal.Identity.IsAuthenticated)
-        //{
-        //    NavigationManager.NavigateTo("/index");
-        //}
-        //{
-        //    user.EmailAddress = "philip.cramer@gmail.com";
-        //    user.Password = "philip.cramer";
-        //}
-
         return base.OnInitializedAsync();
-
     }
 
     private async Task<bool> ValidateUser()
     {
-        //assume that user is valid
-        //call an API
-
-        //var returnedUser = await userService.LoginAsync(user);
         ((CustomAuthStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(user.EmailAddress);
-        NavigationManager.NavigateTo("/");
-
+        NavigationManager.NavigateTo("/entry");
         await sessionStorage.SetItemAsync("emailAddress", user.EmailAddress);
-
         return await Task.FromResult(true);
     }
 }

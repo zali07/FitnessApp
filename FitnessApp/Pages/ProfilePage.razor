@@ -6,16 +6,8 @@
 @using FitnessApiClient.Context
 @using FitnessApiClient
 
-
-<AuthorizeView>
-    <Authorized>
-        <p>@context.User.Identity.Name</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>HEHEHHE</p>
-    </NotAuthorized>
-</AuthorizeView>
-
+<h1>My Profile</h1>
+<h3>Enter Client Barcode</h3>
 
 @if (Message != null)
 {
