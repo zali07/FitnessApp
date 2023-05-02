@@ -16,107 +16,109 @@
 
 @if (updateSuccess) 
 {
-    <div class="alert alert-success fade-in" role="alert">Updated successfully!</div>
+    <div class="alert alert-success fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Updated successfully!</div>
+}
+else if (added)
+{
+    <div class="alert alert-success fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Added successfully!</div>
 }
 @if (failed)
 {
-    <div class="alert alert-danger fade-in" role="alert">Update failed!</div>
+    <div class="alert alert-danger fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Update failed!</div>
 }
 @if (loaded)
 {
-    <div class="alert alert-success fade-in" role="alert">Refreshed successfully!</div>
+    <div class="alert alert-success fade-in" role="alert">Loaded successfully!</div>
+}
+@if (refresh_clicked)
+{
+    <div class="alert alert-info fade-in" role="alert" style="right: 10px">Loading...</div>
 }
 
-<Tabs>
-    <Tab Title="Manage Clients">
-        <h1>- Manage Clients -</h1>
-        <EditForm Model="@newClient" OnValidSubmit="@HandleValidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+<h1>- Clients -</h1>
+<EditForm Model="@newClient" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
             
-            <div class="form-group">
-                <label for="Name">Name:</label>
-                <InputText class="form-control" id="Name" @bind-Value="newClient.Name" placeholder="Client name" />
-            </div>
-            <div class="form-group">
-                <label for="Phone">Phone:</label>
-                <InputText class="form-control" id="Phone" @bind-Value="newClient.Phone" placeholder="+40 123456789"/>
-            </div>
-            <div class="form-group">
-                <label for="Email">Email:</label>
-                <InputText class="form-control" id="Email" @bind-Value="newClient.Email" placeholder="example@domain.tld"/>
-            </div>
-            <div class="form-group">
-                <label for="CNP">CNP:</label>
-                <InputText class="form-control" id="CNP" @bind-Value="newClient.CNP" placeholder = "5981458173264"/>
-            </div>
-            <div class="form-group">
-                <label for="Address">Address:</label>
-                <InputText class="form-control" id="Address" @bind-Value="newClient.Address" />
-            </div>
-            <div class="form-group">
-                <label for="Barcode">Barcode:</label>
-                <InputText class="form-control" id="Barcode" @bind-Value="newClient.Barcode" />
-            </div>
-            <div class="form-group">
-                <label for="Notes">Notes:</label>
-                <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
-            </div>
-            @if (myValidator.Validate(newClient).IsValid)
-            {
-                <button class="btn btn-primary submit">@(
-                        itemSelected ? "Update" : "Submit"
-                )</button>
-            }
-            else
-            {
-                <button class="btn btn-primary submit" disabled>Submit</button>
-            }
-            @if (itemSelected)
-            {
-                <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
-            }
-            <span>@addText</span>
-        </EditForm>
-        <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
-        @*<span>@refreshText</span>*@
-        <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
-        <table class="clients_table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>IsDeleted</th>
-                    @*<th>Photo</th>*@
-                    <th>InsertedDate</th>
-                    <th>CNP</th>
-                    <th>Address</th>
-                    <th>Barcode</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var client in clients)
-                {
-                    <tr @onclick="(() => HandleItemSelected(client.ClientId))"
-                        class="ticket-type-row @((itemSelected && selectedItemId == client.ClientId ? "selected" : ""))">
-                        <td>@client.Name</td>
-                        <td>@client.Phone</td>
-                        <td>@client.Email</td>
-                        <td>@client.IsDeleted</td>
-                        @*<td>@client.Photo</td>*@
-                        <td>@client.InsertedDate</td>
-                        <td>@client.CNP</td>
-                        <td>@client.Address</td>
-                        <td>@client.Barcode</td>
-                        <td>@client.Notes</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </Tab>
-</Tabs>
+    <div class="form-group">
+        <label for="Name">Name:</label>
+        <InputText class="form-control" id="Name" @bind-Value="newClient.Name" placeholder="Client name" />
+    </div>
+    <div class="form-group">
+        <label for="Phone">Phone:</label>
+        <InputText class="form-control" id="Phone" @bind-Value="newClient.Phone" placeholder="+40 123456789"/>
+    </div>
+    <div class="form-group">
+        <label for="Email">Email:</label>
+        <InputText class="form-control" id="Email" @bind-Value="newClient.Email" placeholder="example@domain.tld"/>
+    </div>
+    <div class="form-group">
+        <label for="CNP">CNP:</label>
+        <InputText class="form-control" id="CNP" @bind-Value="newClient.CNP" placeholder = "5981458173264"/>
+    </div>
+    <div class="form-group">
+        <label for="Address">Address:</label>
+        <InputText class="form-control" id="Address" @bind-Value="newClient.Address" />
+    </div>
+    <div class="form-group">
+        <label for="Barcode">Barcode:</label>
+        <InputText class="form-control" id="Barcode" @bind-Value="newClient.Barcode" />
+    </div>
+    <div class="form-group">
+        <label for="Notes">Notes:</label>
+        <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
+    </div>
+    @if (myValidator.Validate(newClient).IsValid)
+    {
+        <button class="btn btn-primary submit">@(
+                itemSelected ? "Update" : "Submit"
+        )</button>
+    }
+    else
+    {
+        <button class="btn btn-primary submit" disabled>Submit</button>
+    }
+    @if (itemSelected)
+    {
+        <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
+    }
+</EditForm>
+<button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
+<button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
+<table class="clients_table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>IsDeleted</th>
+            @*<th>Photo</th>*@
+            <th>InsertedDate</th>
+            <th>CNP</th>
+            <th>Address</th>
+            <th>Barcode</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var client in clients)
+        {
+            <tr @onclick="(() => HandleItemSelected(client.ClientId))"
+                class="ticket-type-row @((itemSelected && selectedItemId == client.ClientId ? "selected" : ""))">
+                <td>@client.Name</td>
+                <td>@client.Phone</td>
+                <td>@client.Email</td>
+                <td>@client.IsDeleted</td>
+                @*<td>@client.Photo</td>*@
+                <td>@client.InsertedDate</td>
+                <td>@client.CNP</td>
+                <td>@client.Address</td>
+                <td>@client.Barcode</td>
+                <td>@client.Notes</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
     private async Task ExportToExcel()
@@ -172,12 +174,12 @@
     private bool updateSuccess = false;
     private bool failed = false;
     private bool loaded = false;
+    private bool refresh_clicked = false;
+    private bool added = false;
 
-    private string refreshText = "";
     private int addReturnValue = 0;
     private int updateReturnValue = 0;
     private int deleteReturnValue = 0;
-    private string addText = "";
 
     private void HandleItemSelected(int clientId)
     {
@@ -185,7 +187,6 @@
         failed = false;
         itemSelected = true;
         selectedItemId = clientId;
-        addText = "";
         newClient = clients.First(client => client.ClientId == clientId);
 
         if (newClient == null)
@@ -206,7 +207,7 @@
 
                 if (addReturnValue == 1)
                 {
-                    updateSuccess = true;
+                    added = true;
                 }
                 else
                 {
@@ -231,25 +232,40 @@
                 }
             }
         }
-        await ScrollToTop();
         await LoadClientsAsync();
         itemSelected = false;
         newClient = new Clients();
-        await ClosePopup();
     }
 
-    private async Task ScrollToTop()
-    {
-        await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
-    }
-
-    private async Task ClosePopup()
+    private async Task ClosePopup(int type)
     {
         StateHasChanged();
-        await Task.Delay(2000);
-        updateSuccess = false;
-        loaded = false;
-        failed = false;
+        switch (type)
+        {
+            case 1:
+                await Task.Delay(2000);
+                updateSuccess = false;
+                loaded = false;
+                return;
+            case 2:
+                await Task.Delay(2000);
+                added = false;
+                loaded = false;
+                return;
+            case 3:
+                await Task.Delay(2000);
+                failed = false;
+                loaded = false;
+                return;
+            case 4:
+                await Task.Delay(2000);
+                updateSuccess = false;
+                added = false;
+                loaded = false;
+                return;
+            default:
+                return;
+        }
     }
 
     private async Task HandleDelete()
@@ -261,19 +277,10 @@
             deleteReturnValue = await adminDbClient.DeleteEntity<TicketTypes>(selectedItemId);      
         }
 
-        if (deleteReturnValue == 1)
-        {
-            addText = "Successfully updated!";
-        }
-        else if (deleteReturnValue == -1)
-        {
-            addText = "Failure!";
-        }
-        await ScrollToTop();
         await LoadClientsAsync();
         itemSelected = false;
         newClient = new Clients();
-        await ClosePopup();
+        await ClosePopup(1);
     }
 
     protected override async Task OnInitializedAsync()
@@ -283,7 +290,7 @@
 
     private async Task LoadClientsAsync()
     {
-        refreshText = "Loading...";
+        refresh_clicked = true;
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
         {
             int act_length = clients.Count();
@@ -296,8 +303,8 @@
             if (!empty || clients.Count() > act_length)
         {
                 loaded = true;
-                refreshText = "Refreshed successfully!";
-                await ClosePopup();
+                refresh_clicked = false;
+                await ClosePopup(4);
             }
         }
     }
