@@ -1,8 +1,10 @@
-using FitnessApiClient;
 using FitnessApiClient.Context;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using FitnessApp.Data;
+using Blazored.SessionStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,20 +12,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<MyDbContext>();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
-        {
-            options.LoginPath = "/login";
-            options.LogoutPath = "/logout";
-            options.AccessDeniedPath = "/accessdenied";
-        });
-builder.Services.AddAuthorization(options =>
-        {
-            options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
 
-        });
+builder.Services.AddBlazoredSessionStorage();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+//builder.Services.AddSingleton<DataContext>();
+
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit= false;
+    options.Password.RequiredLength= 5;
+    options.Password.RequireUppercase= false;
+    options.Password.RequireLowercase= false;
+    options.Password.RequireNonAlphanumeric= false;
+    options.SignIn.RequireConfirmedEmail= false;
+}).AddEntityFrameworkStores<MyDbContext>();
 
 var app = builder.Build();
 

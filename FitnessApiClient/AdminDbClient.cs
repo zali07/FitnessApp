@@ -49,6 +49,19 @@ namespace FitnessApiClient
             }
         }
 
+        public async Task<List<ClientTickets>> GetClientTicketsByClientId(int id)
+        {
+            try
+            {
+                return await _context.Set<ClientTickets>().Where(it => it.ClientId == id).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+
         public async Task<Clients> GetClientByClientId(int id)
         {
             try

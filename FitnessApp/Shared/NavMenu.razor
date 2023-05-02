@@ -9,61 +9,43 @@
     </div>
 </div>
 
-<CascadingAuthenticationState>
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-                <NavLink class="nav-link" href="ticketTypes">
-                <span class="oi oi-plus" aria-hidden="true"></span> Ticket Types
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="clients">
-                <span class="oi oi-plus" aria-hidden="true"></span> Clients
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="clientTickets">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Client Tickets
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="ticketmanager">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> TicketManager
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="entry">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Entry
-            </NavLink>
-        </div>
-
-        <AuthorizeView Roles="Admin">
-            <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="extra">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Extra
+        <AuthorizeView>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> MyProfile
                     </NavLink>
-            </div>
+                </div>
+            </NotAuthorized>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="ticketTypes">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Ticket Types
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="clientTickets">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Client Tickets
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="clients">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Clients
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="entry">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Entry
+                    </NavLink>
+                </div>
+            </Authorized>
         </AuthorizeView>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="logout">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> LogOut
-            </NavLink>
-        </div>
-    </nav>
+
 </div>
-</CascadingAuthenticationState>
 
 @code {
     private bool collapseNavMenu = true;
