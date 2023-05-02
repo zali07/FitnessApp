@@ -14,111 +14,118 @@
 
 @inject IJSRuntime JSRuntime
 
-@if (updateSuccess) 
-{
-    <div class="alert alert-success fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Updated successfully!</div>
-}
-else if (added)
-{
-    <div class="alert alert-success fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Added successfully!</div>
-}
-@if (failed)
-{
-    <div class="alert alert-danger fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Update failed!</div>
-}
-@if (loaded)
-{
-    <div class="alert alert-success fade-in" role="alert">Loaded successfully!</div>
-}
-@if (refresh_clicked)
-{
-    <div class="alert alert-info fade-in" role="alert" style="right: 10px">Loading...</div>
-}
-
-<h1>- Clients -</h1>
-<EditForm Model="@newClient" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-            
-    <div class="form-group">
-        <label for="Name">Name:</label>
-        <InputText class="form-control" id="Name" @bind-Value="newClient.Name" placeholder="Client name" />
-    </div>
-    <div class="form-group">
-        <label for="Phone">Phone:</label>
-        <InputText class="form-control" id="Phone" @bind-Value="newClient.Phone" placeholder="+40 123456789"/>
-    </div>
-    <div class="form-group">
-        <label for="Email">Email:</label>
-        <InputText class="form-control" id="Email" @bind-Value="newClient.Email" placeholder="example@domain.tld"/>
-    </div>
-    <div class="form-group">
-        <label for="CNP">CNP:</label>
-        <InputText class="form-control" id="CNP" @bind-Value="newClient.CNP" placeholder = "5981458173264"/>
-    </div>
-    <div class="form-group">
-        <label for="Address">Address:</label>
-        <InputText class="form-control" id="Address" @bind-Value="newClient.Address" />
-    </div>
-    <div class="form-group">
-        <label for="Barcode">Barcode:</label>
-        <InputText class="form-control" id="Barcode" @bind-Value="newClient.Barcode" />
-    </div>
-    <div class="form-group">
-        <label for="Notes">Notes:</label>
-        <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
-    </div>
-    @if (myValidator.Validate(newClient).IsValid)
-    {
-        <button class="btn btn-primary submit">@(
-                itemSelected ? "Update" : "Submit"
-        )</button>
-    }
-    else
-    {
-        <button class="btn btn-primary submit" disabled>Submit</button>
-    }
-    @if (itemSelected)
-    {
-        <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
-    }
-</EditForm>
-<button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
-<button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
-<table class="clients_table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>IsDeleted</th>
-            @*<th>Photo</th>*@
-            <th>InsertedDate</th>
-            <th>CNP</th>
-            <th>Address</th>
-            <th>Barcode</th>
-            <th>Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var client in clients)
+<AuthorizeView>
+    <Authorized>
+        @if (updateSuccess) 
         {
-            <tr @onclick="(() => HandleItemSelected(client.ClientId))"
-                class="ticket-type-row @((itemSelected && selectedItemId == client.ClientId ? "selected" : ""))">
-                <td>@client.Name</td>
-                <td>@client.Phone</td>
-                <td>@client.Email</td>
-                <td>@client.IsDeleted</td>
-                @*<td>@client.Photo</td>*@
-                <td>@client.InsertedDate</td>
-                <td>@client.CNP</td>
-                <td>@client.Address</td>
-                <td>@client.Barcode</td>
-                <td>@client.Notes</td>
-            </tr>
+            <div class="alert alert-success fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Updated successfully!</div>
         }
-    </tbody>
-</table>
+        else if (added)
+        {
+            <div class="alert alert-success fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Added successfully!</div>
+        }
+        @if (failed)
+        {
+            <div class="alert alert-danger fade-in" role="alert" style="margin-left:@(loaded ? " 15%" : "0")">Update failed!</div>
+        }
+        @if (loaded)
+        {
+            <div class="alert alert-success fade-in" role="alert">Loaded successfully!</div>
+        }
+        @if (refresh_clicked)
+        {
+            <div class="alert alert-info fade-in" role="alert" style="right: 10px">Loading...</div>
+        }
+
+        <h1>- Clients -</h1>
+        <EditForm Model="@newClient" OnValidSubmit="@HandleValidSubmit" Context="editFormContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            
+            <div class="form-group">
+                <label for="Name">Name:</label>
+                <InputText class="form-control" id="Name" @bind-Value="newClient.Name" placeholder="Client name" />
+            </div>
+            <div class="form-group">
+                <label for="Phone">Phone:</label>
+                <InputText class="form-control" id="Phone" @bind-Value="newClient.Phone" placeholder="+40 123456789"/>
+            </div>
+            <div class="form-group">
+                <label for="Email">Email:</label>
+                <InputText class="form-control" id="Email" @bind-Value="newClient.Email" placeholder="example@domain.tld"/>
+            </div>
+            <div class="form-group">
+                <label for="CNP">CNP:</label>
+                <InputText class="form-control" id="CNP" @bind-Value="newClient.CNP" placeholder = "5981458173264"/>
+            </div>
+            <div class="form-group">
+                <label for="Address">Address:</label>
+                <InputText class="form-control" id="Address" @bind-Value="newClient.Address" />
+            </div>
+            <div class="form-group">
+                <label for="Barcode">Barcode:</label>
+                <InputText class="form-control" id="Barcode" @bind-Value="newClient.Barcode" />
+            </div>
+            <div class="form-group">
+                <label for="Notes">Notes:</label>
+                <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
+            </div>
+            @if (myValidator.Validate(newClient).IsValid)
+            {
+                <button class="btn btn-primary submit">@(
+                        itemSelected ? "Update" : "Submit"
+                )</button>
+            }
+            else
+            {
+                <button class="btn btn-primary submit" disabled>Submit</button>
+            }
+            @if (itemSelected)
+            {
+                <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
+            }
+        </EditForm>
+        <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
+        <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
+        <table class="clients_table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>IsDeleted</th>
+                    @*<th>Photo</th>*@
+                    <th>InsertedDate</th>
+                    <th>CNP</th>
+                    <th>Address</th>
+                    <th>Barcode</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var client in clients)
+                {
+                    <tr @onclick="(() => HandleItemSelected(client.ClientId))"
+                        class="ticket-type-row @((itemSelected && selectedItemId == client.ClientId ? "selected" : ""))">
+                        <td>@client.Name</td>
+                        <td>@client.Phone</td>
+                        <td>@client.Email</td>
+                        <td>@client.IsDeleted</td>
+                        @*<td>@client.Photo</td>*@
+                        <td>@client.InsertedDate</td>
+                        <td>@client.CNP</td>
+                        <td>@client.Address</td>
+                        <td>@client.Barcode</td>
+                        <td>@client.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <h2>Please log in to get permission for this page.</h2>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private async Task ExportToExcel()

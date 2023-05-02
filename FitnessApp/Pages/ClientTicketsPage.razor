@@ -10,51 +10,58 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 
-<h1>- Client Tickets -</h1>
+<AuthorizeView>
+    <Authorized>
+        <h1>- Client Tickets -</h1>
 
-@if (loaded)
-{
-    <div class="alert alert-success fade-in" role="alert">Loaded successfully!</div>
-}
-@if (refresh_clicked)
-{
-    <div class="alert alert-info fade-in" role="alert" style="right: 10px">Loading...</div>
-}
-
-<button class="refresh-table" @onclick="async () => await LoadClientTicketsAsync()">Refresh</button>
-<table class="client_tickets_table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ClientId</th>
-            <th>TicketTypeId</th>
-            <th>IssueDate</th>
-            <th>Barcode</th>
-            <th>NumOfEntries</th>
-            <th>BuyPrice</th>
-            <th>Valid</th>
-            <th>FirstUsageDate</th>
-            <th>ArenaId</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var clientTicket in clientTickets)
+        @if (loaded)
         {
-            <tr>
-                <td>@clientTicket.ClientTicketsId</td>
-                <td>@clientTicket.ClientId</td>
-                <td>@clientTicket.TicketTypeId</td>
-                <td>@clientTicket.IssueDate</td>
-                <td>@clientTicket.Barcode</td>
-                <td>@clientTicket.NumOfEntries</td>
-                <td>@clientTicket.BuyPrice</td>
-                <td>@clientTicket.Valid</td>
-                <td>@clientTicket.FirstUsageDate</td>
-                <td>@clientTicket.ArenaId</td>
-            </tr>
+            <div class="alert alert-success fade-in" role="alert">Loaded successfully!</div>
         }
-    </tbody>
-</table>
+        @if (refresh_clicked)
+        {
+            <div class="alert alert-info fade-in" role="alert" style="right: 10px">Loading...</div>
+        }
+
+        <button class="refresh-table" @onclick="async () => await LoadClientTicketsAsync()">Refresh</button>
+        <table class="client_tickets_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ClientId</th>
+                    <th>TicketTypeId</th>
+                    <th>IssueDate</th>
+                    <th>Barcode</th>
+                    <th>NumOfEntries</th>
+                    <th>BuyPrice</th>
+                    <th>Valid</th>
+                    <th>FirstUsageDate</th>
+                    <th>ArenaId</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var clientTicket in clientTickets)
+                {
+                    <tr>
+                        <td>@clientTicket.ClientTicketsId</td>
+                        <td>@clientTicket.ClientId</td>
+                        <td>@clientTicket.TicketTypeId</td>
+                        <td>@clientTicket.IssueDate</td>
+                        <td>@clientTicket.Barcode</td>
+                        <td>@clientTicket.NumOfEntries</td>
+                        <td>@clientTicket.BuyPrice</td>
+                        <td>@clientTicket.Valid</td>
+                        <td>@clientTicket.FirstUsageDate</td>
+                        <td>@clientTicket.ArenaId</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <h2>Please log in to get permission for this page.</h2>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());

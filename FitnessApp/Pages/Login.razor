@@ -5,38 +5,47 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
-<EditForm Model="@user" OnValidSubmit="@ValidateUser">
-    <div>
-        <br /><br /><br /><br /><br />
-    </div>
-    <div>
-        <h3 style="font-weight:bold; color:purple">FitnessApp Login</h3>
-    </div>
-    <div>
-        <br />
-    </div>
-    <div class="col-12 row">
-        <input class="form-control col-12" @bind="user.EmailAddress" placeholder="email address" />
-    </div>
-    <br />
-    <div class="col-12 row">
-        <input type="password" class="form-control col-12" @bind="user.Password" placeholder="password" />
-    </div>
-    <br />
-    <div class="col-12 row">
-        <span class="col-12"></span>
-        <input type="submit" class="form-control col-6 btn btn-primary" value="Login" />
-    </div>
-    <br />
-    <div class="col-12 row" style="text-align:left; font-weight:bold">
-        <span class="col-12">@LoginMesssage</span>
-    </div>
-</EditForm>
+<AuthorizeView>
+    <NotAuthorized>
+        @if (Message != null)
+        {
+            <div class="alert alert-danger">@Message</div>
+        }
+        <EditForm Model="@user" OnValidSubmit="@ValidateUser" Context="editFormContext">
+            <div>
+                <br /><br /><br /><br /><br />
+            </div>
+            <div>
+                <h3 style="font-weight:bold; color:purple">FitnessApp Admin Login</h3>
+            </div>
+            <div>
+                <br />
+            </div>
+            <div class="col-12 row">
+                <input class="form-control col-12" @bind="user.EmailAddress" placeholder="email address" />
+            </div>
+            <br />
+            <div class="col-12 row">
+                <input type="password" class="form-control col-12" @bind="user.Password" placeholder="password" />
+            </div>
+            <br />
+            <div class="col-12 row">
+                <span class="col-12"></span>
+                <input type="submit" class="form-control col-6 btn btn-primary" value="Login" />
+            </div>
+            <br />
+        </EditForm>
+    </NotAuthorized>
+    <Authorized>
+        <h3>Log Out first to log in.</h3>
+    </Authorized>
+</AuthorizeView>
+
 
 @code {
     private User user;
-    public string LoginMesssage { get; set; }
     ClaimsPrincipal claimsPrincipal;
+    private string? Message;
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -49,9 +58,17 @@
 
     private async Task<bool> ValidateUser()
     {
-        ((CustomAuthStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(user.EmailAddress);
-        NavigationManager.NavigateTo("/entry");
-        await sessionStorage.SetItemAsync("emailAddress", user.EmailAddress);
-        return await Task.FromResult(true);
+        if(user.EmailAddress == "admin" && user.Password == "admin")
+        {
+            ((CustomAuthStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(user.EmailAddress);
+            NavigationManager.NavigateTo("/entry");
+            await sessionStorage.SetItemAsync("emailAddress", user.EmailAddress);
+            return await Task.FromResult(true);
+        }
+        else
+        {
+            Message = "Invalid Username or Password";
+            return await Task.FromResult(true);
+        }
     }
 }

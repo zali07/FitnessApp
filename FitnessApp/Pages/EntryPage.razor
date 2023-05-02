@@ -6,43 +6,51 @@
 @using FitnessApiClient.Context
 @using FitnessApiClient
 
-<h2>Enter Ticket Barcode</h2>
+<AuthorizeView>
+    <Authorized>
+        <h1>Entry Page</h1>
+        <h3>Enter Ticket Barcode</h3>
 
-@if (Message != null)
-{
-    if (Message == "Success" || Message == "Access granted")
-    {
-        <div class="alert alert-success">@Message</div>
-    }
-    else
-    {
-        <div class="alert alert-danger">@Message</div>
-    }
-}
+        @if (Message != null)
+        {
+            if (Message == "Success" || Message == "Access granted")
+            {
+                <div class="alert alert-success">@Message</div>
+            }
+            else
+            {
+                <div class="alert alert-danger">@Message</div>
+            }
+        }
 
-<input type="text" @bind="ticketNumber" />
+        <input type="text" @bind="ticketNumber" />
 
-<button @onclick="ValidateTicketBarcodeAsync">Submit</button>
+        <button @onclick="ValidateTicketBarcodeAsync">Submit</button>
 
-@if (dataLoaded)
-{
-    <div>
-        <h2>Ticket Details</h2>
-        <p>Valid: @ticket.Valid</p>
-        <p>Name: @client.Name</p>
-        <p>Valid Until: @(ticket.IssueDate.AddDays(ticketType.ValidityDays).Date)</p>
-        <p>Entries Remained: @ticket.NumOfEntries</p>
-    </div>
-    @if (ticket.Valid || ticket.NumOfEntries <= 0 || (ticket.IssueDate.AddDays(ticketType.ValidityDays) >= DateTime.Now))
-    {
-        <button @onclick="ValidateEntry">Submit</button>
-    }
-}
+        @if (dataLoaded)
+        {
+            <div>
+                <h2>Ticket Details</h2>
+                <p>Valid: @ticket.Valid</p>
+                <p>Name: @client.Name</p>
+                <p>Valid Until: @(ticket.IssueDate.AddDays(ticketType.ValidityDays).Date)</p>
+                <p>Entries Remained: @ticket.NumOfEntries</p>
+            </div>
+            @if (ticket.Valid || ticket.NumOfEntries <= 0 || (ticket.IssueDate.AddDays(ticketType.ValidityDays) >= DateTime.Now))
+            {
+                <button @onclick="ValidateEntry">Submit</button>
+            }
+        }
 
-@if (isLoading)
-{
-    <div>Loading...</div>
-}
+        @if (isLoading)
+        {
+            <div>Loading...</div>
+        }       
+    </Authorized>
+    <NotAuthorized>
+        <h2>Please log in to get permission for this page.</h2>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private string ticketNumber = "";

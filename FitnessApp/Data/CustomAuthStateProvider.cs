@@ -20,18 +20,13 @@ namespace FitnessApp.Data
             {
                 identity = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, emailAddress)
+                new Claim(ClaimTypes.Name, emailAddress)
                 }, "apiauth_type");
             }
             else
             {
                 identity = new ClaimsIdentity();
             }
-
-            //identity = new ClaimsIdentity(new[]
-            //    {
-            //        new Claim(ClaimTypes.Name, "admin")
-            //    }, "apiauth_type");
             var user = new ClaimsPrincipal(identity);
             return await Task.FromResult(new AuthenticationState(user));
         }
