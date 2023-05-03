@@ -25,7 +25,7 @@
 
         <input type="text" @bind="barcode" />
 
-        <button @onclick="ValidateTicketBarcodeAsync">Submit</button>
+        <button class="btn btn-primary" @onclick="ValidateTicketBarcodeAsync">Submit</button>
 
         @if (dataLoaded)
         {
@@ -117,7 +117,8 @@
             isLoading = false;
             Message = "Access granted";
         }
-
+        dataLoaded = false;
+        barcode = "";
     }
 
     private async Task ValidateTicketBarcodeAsync()
