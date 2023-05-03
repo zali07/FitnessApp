@@ -1,8 +1,6 @@
 using FitnessApiClient.Context;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using FitnessApp.Data;
 using Blazored.SessionStorage;
 
@@ -19,6 +17,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddSyncfusionBlazor();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {

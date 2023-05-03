@@ -1,6 +1,6 @@
-﻿@page "/clientTickets"
+﻿@page "/entries"
 
-<PageTitle>Client Tickets</PageTitle>
+<PageTitle>Entries</PageTitle>
 
 @using FitnessApiClient.Api
 @using FitnessApiClient.Context
@@ -12,7 +12,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <h1>- Client Tickets -</h1>
+        <h1>- Entries -</h1>
 
         @if (loaded)
         {
@@ -23,36 +23,28 @@
             <div class="alert alert-info fade-in" role="alert" style="right: 10px">Loading...</div>
         }
 
-        <button class="refresh-table" @onclick="async () => await LoadClientTicketsAsync()">Refresh</button>
+        <button class="refresh-table" @onclick="async () => await LoadEntriesAsync()">Refresh</button>
         <table class="client_tickets_table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>EntryId</th>
                     <th>ClientId</th>
                     <th>TicketTypeId</th>
-                    <th>IssueDate</th>
+                    <th>Date</th>
                     <th>Barcode</th>
-                    <th>NumOfEntries</th>
-                    <th>BuyPrice</th>
-                    <th>Valid</th>
-                    <th>FirstUsageDate</th>
                     <th>ArenaId</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var clientTicket in clientTickets)
+                @foreach (var entry in entries)
                 {
                     <tr>
-                        <td>@clientTicket.ClientTicketsId</td>
-                        <td>@clientTicket.ClientId</td>
-                        <td>@clientTicket.TicketTypeId</td>
-                        <td>@clientTicket.IssueDate</td>
-                        <td>@clientTicket.Barcode</td>
-                        <td>@clientTicket.NumOfEntries</td>
-                        <td>@clientTicket.BuyPrice</td>
-                        <td>@clientTicket.Valid</td>
-                        <td>@clientTicket.FirstUsageDate</td>
-                        <td>@clientTicket.ArenaId</td>
+                        <td>@entry.EntryId</td>
+                        <td>@entry.ClientId</td>
+                        <td>@entry.TicketTypeId</td>
+                        <td>@entry.Date</td>
+                        <td>@entry.Barcode</td>
+                        <td>@entry.ArenaId</td>
                     </tr>
                 }
             </tbody>
@@ -65,14 +57,14 @@
 
 @code {
     private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());
-    private List<ClientTickets> clientTickets = new List<ClientTickets>();
+    private List<Entries> entries = new List<Entries>();
 
     private bool refresh_clicked = false;
     private bool loaded = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadClientTicketsAsync();
+        await LoadEntriesAsync();
     }
 
     private async Task ClosePopup()
@@ -81,21 +73,21 @@
         await Task.Delay(2000);
         loaded = false;
     }
-    
 
-    private async Task LoadClientTicketsAsync()
+
+    private async Task LoadEntriesAsync()
     {
         refresh_clicked = true;
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
         {
-            int act_length = clientTickets.Count();
+            int act_length = entries.Count();
             bool empty = false;
             if (act_length == 0)
             {
                 empty = true;
             }
-            clientTickets = await adminDbClient.GetTable<ClientTickets>();
-            if (!empty || clientTickets.Count() > act_length)
+            entries = await adminDbClient.GetTable<Entries>();
+            if (!empty || entries.Count() > act_length)
             {
                 loaded = true;
                 refresh_clicked = false;

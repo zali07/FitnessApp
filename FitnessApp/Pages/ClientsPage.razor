@@ -11,6 +11,9 @@
 @using Microsoft.AspNetCore.Components.Web
 @using FluentValidation
 @using ClosedXML.Excel
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.DropDowns
+@using Smart.Blazor
 
 @inject IJSRuntime JSRuntime
 
@@ -84,6 +87,45 @@
             {
                 <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
             }
+            <button class="btn btn-primary submit" @onclick="async () => { await LoadTicketTypesAsync(); }" type="button">Add ticket</button>
+            @if (addTicket)
+            {
+                <div class="form-group">
+                    <label for="Barcode">Barcode:</label>
+                    <InputText class="form-control" id="Barcode" @bind-Value="newClient.Barcode" />
+                </div>
+                <div class="form-group">
+                    <label for="Notes">Notes:</label>
+                    <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
+                </div>
+@*                <SfDropDownList TValue="string" TItem="TicketTypes" PopupHeight="350px" PopupWidth="350px" Placeholder="Select a ticket type" @bind-DataSource="ticketTypes">
+                    <DropDownListFieldSettings Value="TicketTypeId" Text="Name" />
+                    <DropDownListEvents TValue="string" TItem="TicketTypes" ValueChange="OnValueChange" />
+                </SfDropDownList>*@
+
+@*
+                <DropDownList>
+                    <ListItem Value="1">Affogato</ListItem>
+                    <ListItem Value="2">Americano</ListItem>
+                    <ListItem Value="3">Bicerin</ListItem>
+                    <ListItem Value="4">Breve</ListItem>
+                    <ListItem Value="5">Cappuccino</ListItem>
+                    <ListItem Value="6">Cafe Crema</ListItem>
+                    <ListItem Value="7">Cafe Corretto</ListItem>
+                </DropDownList>*@
+
+                <Dropdown TItem="TicketTypes" OnSelected="@OnSelected">
+                    <InitialTip>Select ticket type</InitialTip>
+                    <ItemContent Context="dropdownContext">
+                        <DropdownListItem Item="@ticketTypes[0]">@ticketTypes[0]</DropdownListItem>
+                       @* @foreach (var ticketType in @ticketTypes)
+                        {
+                            <Dropdo wnListItem Item="@ticketType"></DropdownListItem>
+                        }*@
+                    </ItemContent>
+                </Dropdown>
+                @*<span>@ticketTypes[0].Name</span>*@
+            }
         </EditForm>
         <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
         <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
@@ -94,7 +136,6 @@
                     <th>Phone</th>
                     <th>Email</th>
                     <th>IsDeleted</th>
-                    @*<th>Photo</th>*@
                     <th>InsertedDate</th>
                     <th>CNP</th>
                     <th>Address</th>
@@ -111,7 +152,6 @@
                         <td>@client.Phone</td>
                         <td>@client.Email</td>
                         <td>@client.IsDeleted</td>
-                        @*<td>@client.Photo</td>*@
                         <td>@client.InsertedDate</td>
                         <td>@client.CNP</td>
                         <td>@client.Address</td>
@@ -128,6 +168,11 @@
 </AuthorizeView>
 
 @code {
+    private void OnSelected(TicketTypes selection)
+    {
+        Console.WriteLine(selection);
+    }
+
     private async Task ExportToExcel()
     {
         using (var workbook = new XLWorkbook())
@@ -173,6 +218,7 @@
     private readonly AdminDbClient adminDbClient = new AdminDbClient(new MyDbContext());
 
     private List<Clients> clients = new List<Clients>();
+    private List<TicketTypes> ticketTypes = new List<TicketTypes>();
 
     private Clients newClient = new Clients();
 
@@ -183,6 +229,7 @@
     private bool loaded = false;
     private bool refresh_clicked = false;
     private bool added = false;
+    private bool addTicket = false;
 
     private int addReturnValue = 0;
     private int updateReturnValue = 0;
@@ -308,11 +355,20 @@
             }
             clients = await adminDbClient.GetTable<Clients>();
             if (!empty || clients.Count() > act_length)
-        {
+            {
                 loaded = true;
                 refresh_clicked = false;
                 await ClosePopup(4);
             }
+        }
+    }
+
+    private async Task LoadTicketTypesAsync()
+    {
+        using (var adminDbClient = new AdminDbClient(new MyDbContext()))
+        {
+            ticketTypes = await adminDbClient.GetTable<TicketTypes>();
+            addTicket = true;
         }
     }
 }

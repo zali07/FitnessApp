@@ -68,3 +68,40 @@ h1 {
     position: fixed;
     top: 10px;
 }
+
+.dropdown-toggle {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    min-width: 200px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: none;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown.show .dropdown-menu {
+    display: block;
+}

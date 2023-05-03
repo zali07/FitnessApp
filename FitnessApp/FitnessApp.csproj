@@ -20,7 +20,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
-    <PackageReference Include="Syncfusion.Blazor" Version="21.2.3" />
     <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="21.2.3" />
   </ItemGroup>
 
