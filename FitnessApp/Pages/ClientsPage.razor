@@ -11,13 +11,10 @@
 @using Microsoft.AspNetCore.Components.Web
 @using FluentValidation
 @using ClosedXML.Excel
-@using Syncfusion.Blazor
-@using Syncfusion.Blazor.DropDowns
-@using Smart.Blazor
 
 @inject IJSRuntime JSRuntime
 
-<AuthorizeView>
+<AuthorizeView Context="authContext">
     <Authorized>
         @if (updateSuccess) 
         {
@@ -73,6 +70,18 @@
                 <label for="Notes">Notes:</label>
                 <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
             </div>
+            @if (addTicket)
+            {
+                <Dropdown TItem="TicketTypes" OnSelected="@OnSelected">
+                    <InitialTip>Select ticket type</InitialTip>
+                    <ChildContent>
+                        @foreach (var ticketType in @ticketTypes)
+                        {
+                            <DropdownListItem Item="ticketType">@ticketType.Name</DropdownListItem>
+                        }
+                    </ChildContent>
+                </Dropdown>
+            }
             @if (myValidator.Validate(newClient).IsValid)
             {
                 <button class="btn btn-primary submit">@(
@@ -88,44 +97,7 @@
                 <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
             }
             <button class="btn btn-primary submit" @onclick="async () => { await LoadTicketTypesAsync(); }" type="button">Add ticket</button>
-            @if (addTicket)
-            {
-                <div class="form-group">
-                    <label for="Barcode">Barcode:</label>
-                    <InputText class="form-control" id="Barcode" @bind-Value="newClient.Barcode" />
-                </div>
-                <div class="form-group">
-                    <label for="Notes">Notes:</label>
-                    <InputTextArea class="form-control" id="Notes" @bind-Value="newClient.Notes" />
-                </div>
-@*                <SfDropDownList TValue="string" TItem="TicketTypes" PopupHeight="350px" PopupWidth="350px" Placeholder="Select a ticket type" @bind-DataSource="ticketTypes">
-                    <DropDownListFieldSettings Value="TicketTypeId" Text="Name" />
-                    <DropDownListEvents TValue="string" TItem="TicketTypes" ValueChange="OnValueChange" />
-                </SfDropDownList>*@
 
-@*
-                <DropDownList>
-                    <ListItem Value="1">Affogato</ListItem>
-                    <ListItem Value="2">Americano</ListItem>
-                    <ListItem Value="3">Bicerin</ListItem>
-                    <ListItem Value="4">Breve</ListItem>
-                    <ListItem Value="5">Cappuccino</ListItem>
-                    <ListItem Value="6">Cafe Crema</ListItem>
-                    <ListItem Value="7">Cafe Corretto</ListItem>
-                </DropDownList>*@
-
-                <Dropdown TItem="TicketTypes" OnSelected="@OnSelected">
-                    <InitialTip>Select ticket type</InitialTip>
-                    <ItemContent Context="dropdownContext">
-                        <DropdownListItem Item="@ticketTypes[0]">@ticketTypes[0]</DropdownListItem>
-                       @* @foreach (var ticketType in @ticketTypes)
-                        {
-                            <Dropdo wnListItem Item="@ticketType"></DropdownListItem>
-                        }*@
-                    </ItemContent>
-                </Dropdown>
-                @*<span>@ticketTypes[0].Name</span>*@
-            }
         </EditForm>
         <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
         <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
@@ -170,7 +142,7 @@
 @code {
     private void OnSelected(TicketTypes selection)
     {
-        Console.WriteLine(selection);
+        ticketType = selection;
     }
 
     private async Task ExportToExcel()
@@ -230,6 +202,7 @@
     private bool refresh_clicked = false;
     private bool added = false;
     private bool addTicket = false;
+    private TicketTypes ticketType = new TicketTypes();
 
     private int addReturnValue = 0;
     private int updateReturnValue = 0;
@@ -251,6 +224,23 @@
 
     private async Task HandleValidSubmit()
     {
+        if(ticketType.Name != null)
+        {
+            using (var adminDbClient = new AdminDbClient(new MyDbContext()))
+            {
+                await adminDbClient.AddEntity<ClientTickets>(new ClientTickets {
+                        ClientId = newClient.ClientId,
+                        TicketTypeId = ticketType.TicketTypeId,
+                        IssueDate = DateTime.Now,
+                        Barcode = newClient.Barcode + DateTime.Now,
+                        NumOfEntries = ticketType.ValidityEntries,
+                        BuyPrice = ticketType.Price,
+                        Valid = true,
+                        FirstUsageDate = DateTime.Now,
+                        ArenaId = ticketType.ArenaId
+            });
+            }
+        }
         updateSuccess = false;
         failed = false;
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
@@ -368,6 +358,11 @@
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
         {
             ticketTypes = await adminDbClient.GetTable<TicketTypes>();
+            ticketTypes = ticketTypes.Where(it => it.IsDeleted == false).ToList();
+            if(ticketTypes == null)
+            {
+                return;
+            }
             addTicket = true;
         }
     }

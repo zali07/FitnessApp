@@ -40,13 +40,13 @@
                         <p>Valid: @ticket.Valid</p>
                         <p>Valid Until: @(ticket.IssueDate.AddDays(ticketType.ValidityDays).Date)</p>
                         <p>Entries Remained: @ticket.NumOfEntries</p>
-                        @if (ticket.Valid || ticket.NumOfEntries <= 0 || (ticket.IssueDate.AddDays(ticketType.ValidityDays) >= DateTime.Now))
+                        @if (ticket.Valid && ticket.NumOfEntries <= 0 && (ticket.IssueDate.AddDays(ticketType.ValidityDays) >= DateTime.Now))
                         {
                             <button @onclick="() => ValidateEntry(ticket.Barcode)">Submit</button>
                         }
                     </div>
                 }
-                if(ticketOrClient == false)
+                else if(ticketOrClient == false)
                 {
                     <h2>Name: @client.Name</h2>
                     @foreach (var t in tickets)
@@ -56,11 +56,12 @@
                             <p>Valid: @t.Valid</p>
                             <p>Valid Until: @(t.IssueDate.AddDays(ticketTypes.FirstOrDefault(it => it.TicketTypeId == t.TicketTypeId).ValidityDays).Date)</p>
                             <p>Entries Remained: @t.NumOfEntries</p>
-                            @if (t.Valid || t.NumOfEntries <= 0 || (t.IssueDate.AddDays(ticketTypes.FirstOrDefault(it => it.TicketTypeId == t.TicketTypeId).ValidityDays) >= DateTime.Now))
+                            @if (t.Valid == true)
                             {
-                                <button @onclick="() => ValidateEntry(t.Barcode)">Submit</button>
+                                <button @onclick="() => ValidateEntry(t.Barcode)">Enter Gym</button>
                             }
                         </div>
+                        <br />
                     }
                 }
             }
