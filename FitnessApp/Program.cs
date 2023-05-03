@@ -17,7 +17,6 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddSyncfusionBlazor();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
