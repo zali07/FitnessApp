@@ -65,7 +65,7 @@ namespace FitnessApiClient.Validator
                 RuleFor(x => ((Clients)(object)x).CNP)
                     .NotEmpty()
                     .WithMessage("Please enter a CNP number.")
-                    .Length(13)
+                    .Matches("^[0-9]{13}$")
                     .WithMessage("Please enter a valid CNP number with 13 characters.");
 
                 RuleFor(x => ((Clients)(object)x).Address)

@@ -11,6 +11,8 @@
 @using Microsoft.AspNetCore.Components.Web
 @using FluentValidation
 @using ClosedXML.Excel
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.DropDowns
 
 @inject IJSRuntime JSRuntime
 
@@ -97,10 +99,20 @@
                 <button class="btn btn-danger submit" @onclick="async () => await HandleDelete()">Delete</button>
             }
             <button class="btn btn-primary submit" @onclick="async () => { await LoadTicketTypesAsync(); }" type="button">Add ticket</button>
-
+        </EditForm>
+        
+        <EditForm Model="@searchTerm" OnValidSubmit="async () => await HandleSearch()" Context="editFormContext2">
+            <label class="search-input" for="Search">Search:</label>
+            <InputText class="form-control" id="Search" @bind-Value="searchTerm" />
+            <button class="btn btn-primary submit search-button">Search</button>
         </EditForm>
         <button class="refresh-table" @onclick="async () => await LoadClientsAsync()">Refresh</button>
         <button class="btn btn-primary export" @onclick="ExportToExcel">Export Clients</button>
+
+        @if (@filteredClients.Count != 0)
+        {
+            <span>@filteredClients[0].Name</span>
+        }
         <table class="clients_table">
             <thead>
                 <tr>
@@ -140,6 +152,7 @@
 </AuthorizeView>
 
 @code {
+    private string searchTerm = "";
     private void OnSelected(TicketTypes selection)
     {
         ticketType = selection;
@@ -192,6 +205,8 @@
     private List<Clients> clients = new List<Clients>();
     private List<TicketTypes> ticketTypes = new List<TicketTypes>();
 
+    private List<Clients> filteredClients = new List<Clients>();
+
     private Clients newClient = new Clients();
 
     private bool itemSelected = false;
@@ -220,6 +235,19 @@
         {
             newClient = new Clients();
         }
+    }
+
+    private async Task HandleSearch()
+    {
+        if (searchTerm == "")
+        {
+            return;
+        }
+        await LoadClientsAsync();
+        clients = string.IsNullOrWhiteSpace(searchTerm)
+            ? clients
+            : clients.Where(t => t.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                              || t.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
     private async Task HandleValidSubmit()
@@ -264,6 +292,7 @@
                 {
                     throw new ArgumentNullException();
                 }
+                newClient.InsertedDate = DateTime.Now;
                 updateReturnValue = await adminDbClient.UpdateEntity<Clients>(selectedItemId, newClient);
 
                 if (updateReturnValue == 1)
@@ -318,7 +347,7 @@
         failed = false;
         using (var adminDbClient = new AdminDbClient(new MyDbContext()))
         {
-            deleteReturnValue = await adminDbClient.DeleteEntity<TicketTypes>(selectedItemId);      
+            deleteReturnValue = await adminDbClient.DeleteEntity<Clients>(selectedItemId);      
         }
 
         await LoadClientsAsync();

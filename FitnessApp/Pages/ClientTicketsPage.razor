@@ -27,7 +27,6 @@
         <table class="client_tickets_table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>ClientId</th>
                     <th>TicketTypeId</th>
                     <th>IssueDate</th>
@@ -43,7 +42,6 @@
                 @foreach (var clientTicket in clientTickets)
                 {
                     <tr>
-                        <td>@clientTicket.ClientTicketsId</td>
                         <td>@clientTicket.ClientId</td>
                         <td>@clientTicket.TicketTypeId</td>
                         <td>@clientTicket.IssueDate</td>
